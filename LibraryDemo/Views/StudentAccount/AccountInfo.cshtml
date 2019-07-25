@@ -1,0 +1,31 @@
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model Dictionary<string, object>
+@{
+    ViewData["Title"] = "AccountInfo";
+    Layout = "_LendingLayout";
+}
+<html>
+<head>
+    <link href="~/css/Library.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="studentbackground">
+        <div id="studentinfo">
+            <div id="studentinfodiv">
+                <h2>账户信息</h2>
+                <ul>
+                    @foreach (var info in Model)
+                    {
+                        <li>@info.Key: @Model[info.Key]</li>
+                    }
+                </ul>
+                <br />
+                <a asp-action="Logout" asp-controller="StudentAccount" asp-route-returnUrl="@(Context.Request.GetDisplayUrl())" class="btn btn-danger">注销</a>
+                <a class="btn btn-primary" asp-action="ModifyPassword">修改密码</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

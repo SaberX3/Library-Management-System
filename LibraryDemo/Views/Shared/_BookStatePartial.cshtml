@@ -1,0 +1,37 @@
+﻿@using LibraryDemo.Models.DomainModels
+@model Book
+    <div class="form-group">
+    @Html.LabelFor(b => b.State)
+        @Html.DropDownListFor(b => b.State, Enum.GetValues(typeof(BookState)).Cast<Enum>().Select(state =>
+        {
+            string enumVal = Enum.GetName(typeof(BookState), state);
+            string displayVal;
+            switch (enumVal)
+            {
+                case "Normal":
+                    displayVal = "可借阅";
+                    break;
+                case "Readonly":
+                    displayVal = "馆内阅览";
+                    break;
+                case "Borrowed":
+                    displayVal = "已借出";
+                    break;
+                case "ReBorrowed":
+                    displayVal = "被续借";
+                    break;
+                case "Appointed":
+                    displayVal = "被预约";
+                    break;
+                default:
+                    displayVal = "";
+                    break;
+            }
+            return new SelectListItem()
+            {
+                Text = displayVal,
+                Value = enumVal,
+                Selected = Model.State.ToString() == enumVal
+            };
+        }))
+    </div>

@@ -1,0 +1,125 @@
+﻿@model LibraryDemo.Models.PersonalInfoViewModel
+@{
+    ViewData["Title"] = "PersonalInfo";
+    Layout = "_LendingLayout";
+}
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/table_css.css" />
+    <link rel="stylesheet" href="~/css/Library_Management.css" />
+    <script>
+        function ensureCancel() {
+            if (confirm("确定取消预约？")) {
+                return true;
+            }
+            return false;
+        }
+    </script>
+</head>
+
+<body style="background: #f5f5f5">
+    <h2>@Model.Student.Name</h2>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    
+    @if (Model.Student.KeepingBooks.Any(b => b.Book.MatureTime < DateTime.Now))
+    {
+        <div id="table_warp">
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="5">过期书籍</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <th>书名</th>
+                    <th>条形码</th>
+                    <th>状态</th>
+                    <th>到期时间</th>
+                    <th>索书号</th>
+                </tr>
+
+                @foreach (var matureBook in Model.Student.KeepingBooks.Where(b => b.Book.MatureTime < DateTime.Now && !b.AppointingDateTime.HasValue))
+                {
+                    <tr>
+                        <td>@matureBook.Book.Name</td>
+                        <td>@matureBook.Book.BarCode</td>
+                        <td>@Html.DisplayFor(b => matureBook.Book.State)</td>
+                        <td>@matureBook.Book.MatureTime?.ToString("yyyy/MM/dd")</td>
+                        <td>@matureBook.Book.FetchBookNumber</td>
+                    </tr>
+                }
+                <tfoot><tr><td colspan="5">罚款:@Model.Student.Fine</td></tr></tfoot>
+            </table>
+        </div>
+    }
+    <form asp-action="ReBorrow" method="post">
+        <div id="table_warp">
+            <table>
+                <tr>
+                    <th>续借</th>
+                    <th>书名</th>
+                    <th>条形码</th>
+                    <th>状态</th>
+                    <th>到期时间</th>
+                    <th>索书号</th>
+                </tr>
+                @if (!Model.Student.KeepingBooks.Any())
+                {
+                    <tr>
+                        <td colspan="6" style="text-align: center">未借阅书本</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var keepingBook in Model.Student.KeepingBooks.Where(b => !b.AppointingDateTime.HasValue))
+                    {
+                        <tr>
+                            <td><input type="checkbox" value="@keepingBook.Book.BarCode" name="barcodes" /></td>
+                            <td>@keepingBook.Book.Name</td>
+                            <td>@keepingBook.Book.BarCode</td>
+                            <td>@Html.DisplayFor(b => keepingBook.Book.State)</td>
+                            <td>@keepingBook.Book.MatureTime?.ToString("yyyy/MM/dd")</td>
+                            <td>@keepingBook.Book.FetchBookNumber</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+        <br />
+        <div style="width: 1000px;">
+        <input type="submit" class="btn-primary btn" id="cancel" value="续借" />
+        </div>
+        <br>
+        <br>
+    </form>
+
+    <br />
+    @if (Model.BookingBook != null)
+    {
+        <form asp-action="CancelAppointing">
+            <div id="table_warp">
+                <table>
+                    <tr>
+                        <th>书名</th>
+                        <th>条形码</th>
+                        <th>状态</th>
+                        <th>预约时间</th>
+                        <th>索书号</th>
+                    </tr>
+                    <book-info book="@Model.BookingBook" is-booking-book="true"></book-info>
+                </table>
+            </div>
+            <br />
+            <input type="hidden" name="barcode" value="@Model.BookingBook.BarCode" />
+            <div style="width: 1000px;">
+            <input type="submit" value="取消预约" class="btn btn-danger" id="cancel" onclick="return ensureCancel()" />
+                </div>
+        </form>
+    }
+</body>
+</html>

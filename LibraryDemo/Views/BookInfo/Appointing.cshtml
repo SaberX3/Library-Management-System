@@ -1,0 +1,36 @@
+﻿@model LibraryDemo.Models.DomainModels.Book
+
+@{
+    ViewData["Title"] = "Booking";
+}
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <title>Library</title>
+    <link href="~/css/Library.css" rel="stylesheet" />
+</head>
+<body>
+    <h2>《@Model.Name》</h2>
+    <br />
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <form method="post">
+        <input type="hidden" value="@Model.BarCode" name="barcode" />
+        <div class="form-group">
+            <div>取书时间</div>
+            <input type="date" name="dateTime" class="form-control" />
+            <br>
+            <br>
+            <input value="确定" type="submit" id="gettimebutton" class="btn btn-primary" />
+        </div>
+
+    </form>
+
+</body>
+</html>
